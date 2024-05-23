@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 from utils.glm4 import glm_analyse
+from utils.bs import spider
 import re
 
 df = pd.DataFrame(columns=["Type", "Title", "Description", "Classification"])
@@ -38,6 +39,8 @@ if response.status_code == 200:
             response0 = requests.get(url1)
             if response0.status_code == 200:
                 response0 = response0.json()["abstract"]
+                if response0 is None:
+                    response0 = spider(reference.get('url'))
             else:
                 response0 = None
             if response0 is not None:
@@ -65,6 +68,8 @@ if response.status_code == 200:
             response0 = requests.get(url1)
             if response0.status_code == 200:
                 response0 = response0.json()["abstract"]
+                if response0 is None:
+                    response0 = spider(citation.get('url'))
             else:
                 response0 = None
             if response0 is not None:
