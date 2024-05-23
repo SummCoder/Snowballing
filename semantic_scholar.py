@@ -6,7 +6,7 @@ import re
 df = pd.DataFrame(columns=["Type", "Title", "Description", "Classification"])
 
 # 修改为相应论文的id
-semantic_scholar_id = "b8216617cec1c7bb73e962773c4458d16cbf8700"
+semantic_scholar_id = "efd9d88c9fff716340e6122d95db6d5219871331"
 
 # 构造请求的URL
 url = f"https://api.semanticscholar.org/v1/paper/{semantic_scholar_id}"
@@ -52,16 +52,6 @@ if response.status_code == 200:
             references_data = [{"Type": "Reference", "Title": reference.get('title', 'No title available'),
                                 "Description": response_data, "Classification": score}]
             df = pd.concat([df, pd.DataFrame(references_data)], ignore_index=True)
-            # # 打印每个引用的作者，如果有的话
-            # if "authors" in reference:
-            #     authors = ", ".join([author.get("name", "N/A") for author in reference["authors"]])
-            #     print(f"Authors: {authors}")
-            # # 打印出版年份
-            # print(f"Year: {reference.get('year', 'No year available')}")
-            # # 打印 Semantic Scholar ID
-            # print(f"Semantic Scholar ID: {reference.get('paperId', 'No ID available')}")
-            # print("-----")
-
     else:
         print("暂没有 References")
     print("\n\n")
@@ -93,8 +83,8 @@ if response.status_code == 200:
 
     print("\n\n")
     # 将DataFrame写入CSV文件
-    df.to_csv("result.csv", index=False)
+    df.to_csv("result3.csv", index=False)
 
-    print("数据已成功写入到result.csv文件中。")
+    print("数据已成功写入到result3.csv文件中。")
 else:
     print(f"请求失败，状态码：{response.status_code}")
