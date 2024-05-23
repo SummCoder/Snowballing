@@ -6,7 +6,7 @@ import re
 df = pd.DataFrame(columns=["Type", "Title", "Description", "Classification"])
 
 # 修改为相应论文的id
-semantic_scholar_id = "fa63131faa1e2b802bee2c4e926899002c65e203"
+semantic_scholar_id = "b8216617cec1c7bb73e962773c4458d16cbf8700"
 
 # 构造请求的URL
 url = f"https://api.semanticscholar.org/v1/paper/{semantic_scholar_id}"
@@ -34,11 +34,21 @@ if response.status_code == 200:
             print(f"{reference.get('title', 'No title available')}")
             url0 = reference.get('url').split("paper/")[-1]
             url1 = f"https://api.semanticscholar.org/v1/paper/{url0}"
-            response0 = requests.get(url1).json()["abstract"]
-            result = glm_analyse(response0)
-            # 构建字典存储结果数据
-            response_data = result.choices[0].message.content
-            score = re.findall(r'\d+', response_data)[-1]
+
+            response0 = requests.get(url1)
+            if response0.status_code == 200:
+                response0 = response0.json()["abstract"]
+            else:
+                response0 = None
+            if response0 is not None:
+                result = glm_analyse(response0)
+                # 构建字典存储结果数据
+                response_data = result.choices[0].message.content
+                score = re.findall(r'\d+', response_data)[-1]
+            else:
+                response_data = "No abstract data available"
+                # 存疑
+                score = 1
             references_data = [{"Type": "Reference", "Title": reference.get('title', 'No title available'),
                                 "Description": response_data, "Classification": score}]
             df = pd.concat([df, pd.DataFrame(references_data)], ignore_index=True)
@@ -62,11 +72,19 @@ if response.status_code == 200:
             print(f"{citation.get('title', 'No title available')}")
             url0 = citation.get('url').split("paper/")[-1]
             url1 = f"https://api.semanticscholar.org/v1/paper/{url0}"
-            response0 = requests.get(url1).json()["abstract"]
-            result = glm_analyse(response0)
-            # 构建字典存储结果数据
-            response_data = result.choices[0].message.content
-            score = re.findall(r'\d+', response_data)[-1]
+            response0 = requests.get(url1)
+            if response0.status_code == 200:
+                response0 = response0.json()["abstract"]
+            else:
+                response0 = None
+            if response0 is not None:
+                result = glm_analyse(response0)
+                # 构建字典存储结果数据
+                response_data = result.choices[0].message.content
+                score = re.findall(r'\d+', response_data)[-1]
+            else:
+                response_data = "No abstract data available"
+                score = 1
             citations_data = [{"Type": "Citation", "Title": citation.get('title', 'No title available'),
                                "Description": response_data, "Classification": score}]
             df = pd.concat([df, pd.DataFrame(citations_data)], ignore_index=True)

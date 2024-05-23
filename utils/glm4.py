@@ -7,7 +7,7 @@ client = ZhipuAI(api_key="")
 
 def glm_analyse(content):
     tools = [{
-        "type": "web_search",git g
+        "type": "web_search",
         "web_search": {
             "enable": False,
             "search_result": False,  # 禁用False，启用：True，默认为禁用
